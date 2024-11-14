@@ -1,0 +1,952 @@
+{
+  "user_profile": {
+    "user_id": "test_user_123",
+    "age": 32,
+    "gender": "female",
+    "weight_kg": 65,
+    "height_cm": 168,
+    "activity_level": "moderate",
+    "self_reported_issues": [
+      "difficulty falling asleep",
+      "occasional mid-night wakings"
+    ],
+    "sleep_goals": {
+      "target_sleep_duration": "8 hours",
+      "target_bedtime": "22:30",
+      "target_wake_time": "06:30"
+    }
+  },
+  "sleep_data": {
+    "daily_metrics": [
+      {
+        "date": "2024-10-14",
+        "total_sleep_duration": 6.69,
+        "time_in_bed": 8.02,
+        "sleep_efficiency": 83.4,
+        "sleep_stages": {
+          "deep_sleep": 68,
+          "light_sleep": 201,
+          "rem_sleep": 98,
+          "awake": 58
+        },
+        "sleep_schedule": {
+          "bedtime": "14:09",
+          "wake_time": "06:05",
+          "time_to_fall_asleep": 33,
+          "number_of_awakenings": 1
+        },
+        "environment": {
+          "temperature_celsius": 20.1,
+          "noise_level_db": 33,
+          "light_level_lux": 0
+        },
+        "physiological": {
+          "average_hr_sleep": 58,
+          "min_hr_sleep": 52,
+          "average_hrv_ms": 53,
+          "respiratory_rate": 14.8,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-10-15",
+        "total_sleep_duration": 7.22,
+        "time_in_bed": 8.44,
+        "sleep_efficiency": 85.5,
+        "sleep_stages": {
+          "deep_sleep": 74,
+          "light_sleep": 225,
+          "rem_sleep": 104,
+          "awake": 64
+        },
+        "sleep_schedule": {
+          "bedtime": "14:03",
+          "wake_time": "06:37",
+          "time_to_fall_asleep": 28,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 21.7,
+          "noise_level_db": 29,
+          "light_level_lux": 4
+        },
+        "physiological": {
+          "average_hr_sleep": 60,
+          "min_hr_sleep": 53,
+          "average_hrv_ms": 53,
+          "respiratory_rate": 14.2,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-10-16",
+        "total_sleep_duration": 6.33,
+        "time_in_bed": 7.06,
+        "sleep_efficiency": 89.7,
+        "sleep_stages": {
+          "deep_sleep": 62,
+          "light_sleep": 200,
+          "rem_sleep": 78,
+          "awake": 27
+        },
+        "sleep_schedule": {
+          "bedtime": "14:42",
+          "wake_time": "05:44",
+          "time_to_fall_asleep": 39,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 20.7,
+          "noise_level_db": 26,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 65,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 50,
+          "respiratory_rate": 15.3,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-10-17",
+        "total_sleep_duration": 6.79,
+        "time_in_bed": 8.05,
+        "sleep_efficiency": 84.3,
+        "sleep_stages": {
+          "deep_sleep": 82,
+          "light_sleep": 217,
+          "rem_sleep": 90,
+          "awake": 50
+        },
+        "sleep_schedule": {
+          "bedtime": "14:09",
+          "wake_time": "06:11",
+          "time_to_fall_asleep": 39,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 20.6,
+          "noise_level_db": 31,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 58,
+          "min_hr_sleep": 51,
+          "average_hrv_ms": 54,
+          "respiratory_rate": 14.1,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-10-18",
+        "total_sleep_duration": 7.57,
+        "time_in_bed": 9.19,
+        "sleep_efficiency": 82.4,
+        "sleep_stages": {
+          "deep_sleep": 100,
+          "light_sleep": 221,
+          "rem_sleep": 92,
+          "awake": 44
+        },
+        "sleep_schedule": {
+          "bedtime": "13:51",
+          "wake_time": "06:58",
+          "time_to_fall_asleep": 45,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 21.9,
+          "noise_level_db": 31,
+          "light_level_lux": 4
+        },
+        "physiological": {
+          "average_hr_sleep": 56,
+          "min_hr_sleep": 53,
+          "average_hrv_ms": 45,
+          "respiratory_rate": 15.6,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-10-19",
+        "total_sleep_duration": 7.55,
+        "time_in_bed": 8.46,
+        "sleep_efficiency": 89.2,
+        "sleep_stages": {
+          "deep_sleep": 104,
+          "light_sleep": 248,
+          "rem_sleep": 100,
+          "awake": 50
+        },
+        "sleep_schedule": {
+          "bedtime": "14:36",
+          "wake_time": "06:57",
+          "time_to_fall_asleep": 44,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 21.1,
+          "noise_level_db": 25,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 62,
+          "min_hr_sleep": 52,
+          "average_hrv_ms": 41,
+          "respiratory_rate": 15.8,
+          "body_temperature_celsius": 36.7
+        }
+      },
+      {
+        "date": "2024-10-20",
+        "total_sleep_duration": 7.54,
+        "time_in_bed": 8.28,
+        "sleep_efficiency": 91.1,
+        "sleep_stages": {
+          "deep_sleep": 80,
+          "light_sleep": 210,
+          "rem_sleep": 102,
+          "awake": 42
+        },
+        "sleep_schedule": {
+          "bedtime": "15:07",
+          "wake_time": "06:56",
+          "time_to_fall_asleep": 27,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 20.5,
+          "noise_level_db": 30,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 59,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 53,
+          "respiratory_rate": 14.5,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-10-21",
+        "total_sleep_duration": 6.97,
+        "time_in_bed": 8.06,
+        "sleep_efficiency": 86.5,
+        "sleep_stages": {
+          "deep_sleep": 99,
+          "light_sleep": 209,
+          "rem_sleep": 84,
+          "awake": 51
+        },
+        "sleep_schedule": {
+          "bedtime": "13:47",
+          "wake_time": "06:22",
+          "time_to_fall_asleep": 19,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.8,
+          "noise_level_db": 35,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 64,
+          "min_hr_sleep": 49,
+          "average_hrv_ms": 41,
+          "respiratory_rate": 15.7,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-10-22",
+        "total_sleep_duration": 6.61,
+        "time_in_bed": 7.47,
+        "sleep_efficiency": 88.5,
+        "sleep_stages": {
+          "deep_sleep": 97,
+          "light_sleep": 212,
+          "rem_sleep": 92,
+          "awake": 49
+        },
+        "sleep_schedule": {
+          "bedtime": "13:41",
+          "wake_time": "06:01",
+          "time_to_fall_asleep": 40,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 18.6,
+          "noise_level_db": 27,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 58,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 38,
+          "respiratory_rate": 15.3,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-10-23",
+        "total_sleep_duration": 6.61,
+        "time_in_bed": 7.99,
+        "sleep_efficiency": 82.7,
+        "sleep_stages": {
+          "deep_sleep": 64,
+          "light_sleep": 206,
+          "rem_sleep": 93,
+          "awake": 21
+        },
+        "sleep_schedule": {
+          "bedtime": "13:25",
+          "wake_time": "06:01",
+          "time_to_fall_asleep": 28,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 21.6,
+          "noise_level_db": 33,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 57,
+          "min_hr_sleep": 54,
+          "average_hrv_ms": 36,
+          "respiratory_rate": 15.2,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-10-24",
+        "total_sleep_duration": 6.73,
+        "time_in_bed": 8.07,
+        "sleep_efficiency": 83.4,
+        "sleep_stages": {
+          "deep_sleep": 74,
+          "light_sleep": 196,
+          "rem_sleep": 98,
+          "awake": 25
+        },
+        "sleep_schedule": {
+          "bedtime": "13:45",
+          "wake_time": "06:08",
+          "time_to_fall_asleep": 41,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 19.3,
+          "noise_level_db": 28,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 63,
+          "min_hr_sleep": 52,
+          "average_hrv_ms": 42,
+          "respiratory_rate": 15.6,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-10-25",
+        "total_sleep_duration": 6.26,
+        "time_in_bed": 7.56,
+        "sleep_efficiency": 82.8,
+        "sleep_stages": {
+          "deep_sleep": 76,
+          "light_sleep": 170,
+          "rem_sleep": 85,
+          "awake": 40
+        },
+        "sleep_schedule": {
+          "bedtime": "13:55",
+          "wake_time": "05:40",
+          "time_to_fall_asleep": 30,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.4,
+          "noise_level_db": 27,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 64,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 36,
+          "respiratory_rate": 14.9,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-10-26",
+        "total_sleep_duration": 7.55,
+        "time_in_bed": 8.1,
+        "sleep_efficiency": 93.2,
+        "sleep_stages": {
+          "deep_sleep": 87,
+          "light_sleep": 229,
+          "rem_sleep": 109,
+          "awake": 40
+        },
+        "sleep_schedule": {
+          "bedtime": "13:51",
+          "wake_time": "06:57",
+          "time_to_fall_asleep": 32,
+          "number_of_awakenings": 1
+        },
+        "environment": {
+          "temperature_celsius": 19.6,
+          "noise_level_db": 33,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 65,
+          "min_hr_sleep": 52,
+          "average_hrv_ms": 50,
+          "respiratory_rate": 14.3,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-10-27",
+        "total_sleep_duration": 8.26,
+        "time_in_bed": 9.02,
+        "sleep_efficiency": 91.6,
+        "sleep_stages": {
+          "deep_sleep": 104,
+          "light_sleep": 230,
+          "rem_sleep": 115,
+          "awake": 38
+        },
+        "sleep_schedule": {
+          "bedtime": "13:25",
+          "wake_time": "07:40",
+          "time_to_fall_asleep": 28,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.6,
+          "noise_level_db": 31,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 63,
+          "min_hr_sleep": 49,
+          "average_hrv_ms": 39,
+          "respiratory_rate": 15.4,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-10-28",
+        "total_sleep_duration": 6.97,
+        "time_in_bed": 7.96,
+        "sleep_efficiency": 87.6,
+        "sleep_stages": {
+          "deep_sleep": 97,
+          "light_sleep": 194,
+          "rem_sleep": 102,
+          "awake": 54
+        },
+        "sleep_schedule": {
+          "bedtime": "15:09",
+          "wake_time": "06:22",
+          "time_to_fall_asleep": 43,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 20.1,
+          "noise_level_db": 30,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 60,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 35,
+          "respiratory_rate": 14.9,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-10-29",
+        "total_sleep_duration": 7.49,
+        "time_in_bed": 8.5,
+        "sleep_efficiency": 88.1,
+        "sleep_stages": {
+          "deep_sleep": 80,
+          "light_sleep": 224,
+          "rem_sleep": 101,
+          "awake": 39
+        },
+        "sleep_schedule": {
+          "bedtime": "15:12",
+          "wake_time": "06:53",
+          "time_to_fall_asleep": 19,
+          "number_of_awakenings": 1
+        },
+        "environment": {
+          "temperature_celsius": 21.3,
+          "noise_level_db": 33,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 59,
+          "min_hr_sleep": 51,
+          "average_hrv_ms": 44,
+          "respiratory_rate": 14.8,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-10-30",
+        "total_sleep_duration": 7.48,
+        "time_in_bed": 8.4,
+        "sleep_efficiency": 89.1,
+        "sleep_stages": {
+          "deep_sleep": 85,
+          "light_sleep": 214,
+          "rem_sleep": 111,
+          "awake": 41
+        },
+        "sleep_schedule": {
+          "bedtime": "15:21",
+          "wake_time": "06:53",
+          "time_to_fall_asleep": 30,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.2,
+          "noise_level_db": 26,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 62,
+          "min_hr_sleep": 54,
+          "average_hrv_ms": 38,
+          "respiratory_rate": 15.2,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-10-31",
+        "total_sleep_duration": 6.57,
+        "time_in_bed": 7.91,
+        "sleep_efficiency": 83.1,
+        "sleep_stages": {
+          "deep_sleep": 90,
+          "light_sleep": 194,
+          "rem_sleep": 95,
+          "awake": 38
+        },
+        "sleep_schedule": {
+          "bedtime": "14:29",
+          "wake_time": "05:58",
+          "time_to_fall_asleep": 33,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 21.9,
+          "noise_level_db": 27,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 58,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 36,
+          "respiratory_rate": 16.0,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-11-01",
+        "total_sleep_duration": 6.84,
+        "time_in_bed": 7.66,
+        "sleep_efficiency": 89.3,
+        "sleep_stages": {
+          "deep_sleep": 89,
+          "light_sleep": 187,
+          "rem_sleep": 83,
+          "awake": 25
+        },
+        "sleep_schedule": {
+          "bedtime": "14:26",
+          "wake_time": "06:14",
+          "time_to_fall_asleep": 26,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 18.9,
+          "noise_level_db": 34,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 58,
+          "min_hr_sleep": 52,
+          "average_hrv_ms": 54,
+          "respiratory_rate": 15.8,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-11-02",
+        "total_sleep_duration": 7.77,
+        "time_in_bed": 8.35,
+        "sleep_efficiency": 93.1,
+        "sleep_stages": {
+          "deep_sleep": 104,
+          "light_sleep": 246,
+          "rem_sleep": 104,
+          "awake": 35
+        },
+        "sleep_schedule": {
+          "bedtime": "14:01",
+          "wake_time": "07:10",
+          "time_to_fall_asleep": 35,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.0,
+          "noise_level_db": 26,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 64,
+          "min_hr_sleep": 54,
+          "average_hrv_ms": 49,
+          "respiratory_rate": 14.6,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-11-03",
+        "total_sleep_duration": 7.8,
+        "time_in_bed": 8.5,
+        "sleep_efficiency": 91.8,
+        "sleep_stages": {
+          "deep_sleep": 76,
+          "light_sleep": 256,
+          "rem_sleep": 104,
+          "awake": 43
+        },
+        "sleep_schedule": {
+          "bedtime": "14:52",
+          "wake_time": "07:12",
+          "time_to_fall_asleep": 33,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 20.0,
+          "noise_level_db": 31,
+          "light_level_lux": 0
+        },
+        "physiological": {
+          "average_hr_sleep": 63,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 42,
+          "respiratory_rate": 14.7,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-11-04",
+        "total_sleep_duration": 6.91,
+        "time_in_bed": 8.11,
+        "sleep_efficiency": 85.2,
+        "sleep_stages": {
+          "deep_sleep": 66,
+          "light_sleep": 205,
+          "rem_sleep": 94,
+          "awake": 39
+        },
+        "sleep_schedule": {
+          "bedtime": "14:12",
+          "wake_time": "06:19",
+          "time_to_fall_asleep": 18,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 20.9,
+          "noise_level_db": 31,
+          "light_level_lux": 3
+        },
+        "physiological": {
+          "average_hr_sleep": 62,
+          "min_hr_sleep": 51,
+          "average_hrv_ms": 53,
+          "respiratory_rate": 15.6,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-11-05",
+        "total_sleep_duration": 7.09,
+        "time_in_bed": 8.01,
+        "sleep_efficiency": 88.5,
+        "sleep_stages": {
+          "deep_sleep": 71,
+          "light_sleep": 223,
+          "rem_sleep": 87,
+          "awake": 53
+        },
+        "sleep_schedule": {
+          "bedtime": "14:25",
+          "wake_time": "06:29",
+          "time_to_fall_asleep": 25,
+          "number_of_awakenings": 1
+        },
+        "environment": {
+          "temperature_celsius": 20.0,
+          "noise_level_db": 29,
+          "light_level_lux": 4
+        },
+        "physiological": {
+          "average_hr_sleep": 59,
+          "min_hr_sleep": 51,
+          "average_hrv_ms": 46,
+          "respiratory_rate": 15.2,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-11-06",
+        "total_sleep_duration": 7.45,
+        "time_in_bed": 8.5,
+        "sleep_efficiency": 87.6,
+        "sleep_stages": {
+          "deep_sleep": 88,
+          "light_sleep": 232,
+          "rem_sleep": 98,
+          "awake": 40
+        },
+        "sleep_schedule": {
+          "bedtime": "14:27",
+          "wake_time": "06:51",
+          "time_to_fall_asleep": 42,
+          "number_of_awakenings": 4
+        },
+        "environment": {
+          "temperature_celsius": 20.7,
+          "noise_level_db": 27,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 65,
+          "min_hr_sleep": 48,
+          "average_hrv_ms": 51,
+          "respiratory_rate": 14.9,
+          "body_temperature_celsius": 36.3
+        }
+      },
+      {
+        "date": "2024-11-07",
+        "total_sleep_duration": 6.64,
+        "time_in_bed": 7.82,
+        "sleep_efficiency": 84.9,
+        "sleep_stages": {
+          "deep_sleep": 91,
+          "light_sleep": 209,
+          "rem_sleep": 86,
+          "awake": 24
+        },
+        "sleep_schedule": {
+          "bedtime": "15:14",
+          "wake_time": "06:02",
+          "time_to_fall_asleep": 39,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 19.1,
+          "noise_level_db": 28,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 63,
+          "min_hr_sleep": 51,
+          "average_hrv_ms": 40,
+          "respiratory_rate": 15.3,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-11-08",
+        "total_sleep_duration": 7.51,
+        "time_in_bed": 8.58,
+        "sleep_efficiency": 87.5,
+        "sleep_stages": {
+          "deep_sleep": 81,
+          "light_sleep": 228,
+          "rem_sleep": 109,
+          "awake": 27
+        },
+        "sleep_schedule": {
+          "bedtime": "15:05",
+          "wake_time": "06:55",
+          "time_to_fall_asleep": 42,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 20.9,
+          "noise_level_db": 27,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 60,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 52,
+          "respiratory_rate": 15.9,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-11-09",
+        "total_sleep_duration": 7.91,
+        "time_in_bed": 8.66,
+        "sleep_efficiency": 91.3,
+        "sleep_stages": {
+          "deep_sleep": 113,
+          "light_sleep": 250,
+          "rem_sleep": 107,
+          "awake": 43
+        },
+        "sleep_schedule": {
+          "bedtime": "14:48",
+          "wake_time": "07:19",
+          "time_to_fall_asleep": 18,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 18.1,
+          "noise_level_db": 28,
+          "light_level_lux": 5
+        },
+        "physiological": {
+          "average_hr_sleep": 63,
+          "min_hr_sleep": 49,
+          "average_hrv_ms": 40,
+          "respiratory_rate": 15.3,
+          "body_temperature_celsius": 36.5
+        }
+      },
+      {
+        "date": "2024-11-10",
+        "total_sleep_duration": 8.13,
+        "time_in_bed": 8.98,
+        "sleep_efficiency": 90.5,
+        "sleep_stages": {
+          "deep_sleep": 102,
+          "light_sleep": 237,
+          "rem_sleep": 122,
+          "awake": 28
+        },
+        "sleep_schedule": {
+          "bedtime": "15:13",
+          "wake_time": "07:32",
+          "time_to_fall_asleep": 38,
+          "number_of_awakenings": 3
+        },
+        "environment": {
+          "temperature_celsius": 19.7,
+          "noise_level_db": 28,
+          "light_level_lux": 4
+        },
+        "physiological": {
+          "average_hr_sleep": 60,
+          "min_hr_sleep": 53,
+          "average_hrv_ms": 41,
+          "respiratory_rate": 14.5,
+          "body_temperature_celsius": 36.6
+        }
+      },
+      {
+        "date": "2024-11-11",
+        "total_sleep_duration": 6.39,
+        "time_in_bed": 7.16,
+        "sleep_efficiency": 89.3,
+        "sleep_stages": {
+          "deep_sleep": 63,
+          "light_sleep": 205,
+          "rem_sleep": 80,
+          "awake": 44
+        },
+        "sleep_schedule": {
+          "bedtime": "15:21",
+          "wake_time": "05:47",
+          "time_to_fall_asleep": 33,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 18.6,
+          "noise_level_db": 29,
+          "light_level_lux": 1
+        },
+        "physiological": {
+          "average_hr_sleep": 62,
+          "min_hr_sleep": 54,
+          "average_hrv_ms": 53,
+          "respiratory_rate": 15.4,
+          "body_temperature_celsius": 36.4
+        }
+      },
+      {
+        "date": "2024-11-12",
+        "total_sleep_duration": 7.77,
+        "time_in_bed": 8.83,
+        "sleep_efficiency": 88.0,
+        "sleep_stages": {
+          "deep_sleep": 107,
+          "light_sleep": 219,
+          "rem_sleep": 114,
+          "awake": 37
+        },
+        "sleep_schedule": {
+          "bedtime": "13:31",
+          "wake_time": "07:10",
+          "time_to_fall_asleep": 30,
+          "number_of_awakenings": 2
+        },
+        "environment": {
+          "temperature_celsius": 20.7,
+          "noise_level_db": 31,
+          "light_level_lux": 2
+        },
+        "physiological": {
+          "average_hr_sleep": 56,
+          "min_hr_sleep": 50,
+          "average_hrv_ms": 44,
+          "respiratory_rate": 14.6,
+          "body_temperature_celsius": 36.6
+        }
+      }
+    ],
+    "aggregated_metrics": {
+      "average_metrics": {
+        "avg_sleep_duration": 7.18,
+        "avg_sleep_efficiency": 87.6,
+        "avg_deep_sleep_percentage": 19.9,
+        "avg_rem_percentage": 22.7
+      },
+      "sleep_patterns": {
+        "weekday_avg_duration": 6.95,
+        "weekend_avg_duration": 7.81,
+        "social_jet_lag": 0.7
+      },
+      "sleep_quality_indicators": {
+        "consistent_sleep_schedule": false,
+        "optimal_deep_sleep": true,
+        "efficient_sleep": true,
+        "sleep_debt": 3.9
+      },
+      "trends": {
+        "sleep_duration_trend": "decreasing",
+        "sleep_efficiency_trend": "stable",
+        "deep_sleep_trend": "stable",
+        "notable_changes": [
+          "Decreased average sleep duration by 30 minutes over past week",
+          "Improved sleep efficiency on weekends",
+          "Consistent deep sleep percentage"
+        ]
+      }
+    }
+  }
+}

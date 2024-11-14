@@ -1,0 +1,2 @@
+[console_scripts]
+my_health_assistant = my_health_assistant.main:main

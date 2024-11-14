@@ -1,0 +1,7 @@
+setup.py
+my_health_assistant.egg-info/PKG-INFO
+my_health_assistant.egg-info/SOURCES.txt
+my_health_assistant.egg-info/dependency_links.txt
+my_health_assistant.egg-info/entry_points.txt
+my_health_assistant.egg-info/requires.txt
+my_health_assistant.egg-info/top_level.txt

@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: my_health_assistant
+Version: 0.1.0
+Requires-Dist: langchain>=0.0.134
+Requires-Dist: langchain-community>=0.1.0
+Requires-Dist: faiss-cpu>=1.7.2
+Requires-Dist: openai>=0.27.0
+Requires-Dist: langgraph>=0.1.0
