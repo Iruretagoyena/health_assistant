@@ -146,7 +146,7 @@ def analyze_gut_health(microbiome_score):
 
 # Sub-function for joint health analysis (inflammation markers)
 def analyze_joint_health(joint_inflammation_marker):
-    print(f"Debug - Joint inflammation marker: {joint_in
+    print(f"Debug - Joint inflammation marker: {joint_inflammation_marker}")
 
 
 # Sub-function for analyzing cardiovascular health
@@ -392,11 +392,11 @@ def analyze_gut_health(microbiome_score):
 
 # Sub-function for joint health analysis (inflammation markers)
 def analyze_joint_health(joint_inflammation_marker):
-    print(f"Debug - Joint inflammation marker: {joint_in
+    print(f"Debug - Joint inflammation marker: {joint_inflammation_marker}")
 
 # Main function to analyze aging rate and aggregate recommendations
 def analyze_aging_rate(aging_rate, cardiovascular_health=None, telomere_length=None, metabolic_factors=None, crp_level=None, cortisol_level=None, sleep_hours=None, deep_sleep_hours=None, muscle_mass_index=None, bone_density_score=None, cd4_cd8_ratio=None, hydration_level=None, antioxidant_levels=None, rmr=None):
-    print(f"Debug - Comprehensive aging rate analysis")
+    print("Debug - Comprehensive aging rate analysis")
     recommendations = []
 
     if aging_rate > 1:
@@ -414,16 +414,12 @@ def analyze_aging_rate(aging_rate, cardiovascular_health=None, telomere_length=N
         recommendations.append(analyze_oxidative_stress(antioxidant_levels))
         recommendations.append(analyze_metabolic_rate(rmr))
     elif aging_rate < 1:
-        recommendations.append(
-            "Great job! Your pace of aging is below average. Maintain current health practices, including balanced nutrition and regular exercise."
-        )
+        recommendations.append("Great job! Your pace of aging is below average. Maintain current health practices, including balanced nutrition and regular exercise.")
     else:
-        recommendations.append(
-            "Your aging rate is typical. Continue healthy habits and consider periodic health assessments to catch changes early."
-        )
+        recommendations.append("Your aging rate is within normal ranges. Continue healthy habits and consider periodic health assessments to catch changes early.")
 
     return " ".join([rec for rec in recommendations if rec])
 
 # Example usage:
-# result = analyze_aging_rate(1.2, cardiovascular_health=45, telomere_length=6.5, metabolic_factors={'glucose': 110}, crp_level=4, cortisol_level=22, sleep_hours=6, deep_sleep_hours=1.2, muscle_mass_index=28, bone_density_score=2.3, cd4_cd8_ratio=0.9, hydration_level=45, antioxidant_levels=0.8, rmr=1400)
+result = analyze_aging_rate(1.2, cardiovascular_health=45, telomere_length=6.5, metabolic_factors={'glucose': 110}, crp_level=4, cortisol_level=22, sleep_hours=6, deep_sleep_hours=1.2, muscle_mass_index=28, bone_density_score=2.3, cd4_cd8_ratio=0.9, hydration_level=45, antioxidant_levels=0.8, rmr=1400)
 # print(result)

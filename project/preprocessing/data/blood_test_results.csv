@@ -1,0 +1,67 @@
+Test,Qualitative,Quantitative,Unit,Optimal Range
+Hemoglobin,In Range,13.5,g/dL,13.2 - 17.1
+Hematocrit,In Range,41.0,%,38.5 - 50
+Mean Cell Hemoglobin,In Range,30.4,pg,27 - 33
+Mean Cell Hemoglobin Concentration,In Range,32.9,g/dL,32 - 36
+Mean Cell Volume,Normal,92.3,fL,80 - 93.6
+Red Blood Cells,In Range,4.44,10⁶/µL,4.2 - 5.8
+Basophils,In Range,0.04,10³/µL,0 - 0.2
+Eosinophils,In Range,0.07,10³/µL,0.015 - 0.5
+Lymphocytes,In Range,2.04,10³/µL,0.85 - 3.9
+Monocytes,In Range,0.53,10³/µL,0.2 - 0.95
+Neutrophils,In Range,2.13,10³/µL,1.5 - 7.8
+White Blood Cells,In Range,4.81,10³/µL,3.8 - 10.8
+Platelets,In Range,263.0,10³/µL,140 - 400
+Ferritin,In Range,137.0,ng/mL,38 - 380
+Total Cholesterol,In Range,141.0,mg/dL,<200
+LDL Cholesterol,Optimal,62.8,mg/dL,<100
+HDL Cholesterol,High,64.9,mg/dL,40 - 60
+Triglycerides,In Range,50.6,mg/dL,<150
+Apolipoprotein A-I,In Range,166.0,mg/dL,120 - 176
+Apolipoprotein B,In Range,53.0,mg/dL,<90
+Lipoprotein (a),High,97.5,nmol/L,<75
+High Sensitivity C-Reactive Protein (hsCRP),High,4.26,mg/L,<1
+Homocysteine,In Range,9.0,µmol/L,<11.4
+Creatine Kinase (CK-NAC),High,623.0,IU/L,44 - 196
+Glucose,In Range,76.1,mg/dL,65 - 99
+HbA1c,In Range,5.14,%,4 - 5.7
+Insulin,In Range,5.52,µIU/mL,2.6 - 24.9
+C-peptide,In Range,1.67,ng/mL,1.1 - 4.4
+Albumin,In Range,4.8,g/dL,3.6 - 5.1
+Calcium (adjusted),In Range,9.49,mg/dL,8.6 - 10.3
+Creatinine,In Range,0.99,mg/dL,0.6 - 1.24
+Cystatin C,In Range,0.92,mg/L,0.52 - 1.23
+Estimated Glomerular Filtration Rate (eGFR),Optimal,105.0,mL/min/1.73m²,>60
+Magnesium,In Range,2.02,mg/dL,1.7 - 2.7
+Potassium,In Range,4.55,mmol/L,3.5 - 5.1
+Sodium,In Range,142.0,mmol/L,136 - 146
+Urea (BUN),In Range,20.5,mg/dL,10 - 50
+Uric Acid,Low,3.55,mg/dL,4 - 8
+Alanine Aminotransferase (ALT),In Range,24.8,IU/L,<46
+Alkaline Phosphatase (ALP),In Range,43.0,IU/L,36 - 130
+Aspartate Aminotransferase (AST/GOT),In Range,33.8,IU/L,10 - 40
+Copper,Optimal,80.7,µg/dL,70 - 150
+Gamma-Glutamyltransferase (GGT),In Range,9.0,IU/L,3 - 70
+Total Bilirubin,In Range,0.98,mg/dL,0.2 - 1.2
+Lipase,In Range,26.4,IU/L,7 - 59
+Amylase,In Range,27.0,IU/L,19 - 86
+Vitamin C Level,High,2.25,mmol/L,1.3 - 1.77
+Vitamin B12,In Range,851.0,pg/mL,232 - 1240
+"Vitamin D, 25 Hydroxy",In Range,42.2,ng/mL,30 - 100
+Zinc,Optimal,16.8,µg/L,4 - 51
+Carotene,High,63.0,mg/dL,<1
+Lead,Less than,1.0,µg/dL,4 - 6.4
+"Magnesium, RBC",Optimal,5.4,µg/dL,4 - 10
+Mercury,Optimal,5.0,mg/dL,87 - 318
+Methylmalonic Acid,In Range,254.0,mg/L,38 - 98
+Vitamin A (Retinol),In Range,63.0,mg/L,5.7 - 19.9
+Vitamin E (Tocopherol),In Range,9.3,IU/mL,<100
+Immunoglobulin E (IgE),In Range,50.0,ng/dL,0.8 - 1.8
+Free Thyroxine (FT4),In Range,1.38,pg/mL,2.3 - 4.2
+Free Tri-iodothyronine (FT3),In Range,3.5,µIU/mL,0.27 - 4.2
+Thyroid Stimulating Hormone (TSH),In Range,2.24,ng/mL,120 - 394
+Insulin-like Growth Factor-1 (IGF-1),In Range,178.0,nmol/L,10 - 50
+Sex Hormone Binding Globulin (SHBG),In Range,19.2,ng/dL,250 - 827
+"Testosterone, Total",,275.0,pg/mL,<39
+Estradiol,,35.8,ng/mL,<4
+Total Prostate Specific Antigen (TPSA),,0.826,,
