@@ -1,5 +1,7 @@
 from health_assistant.generate_sleep_profile import generate_sleep_profile
 import json
+import pandas as pd
+
 
 def process_user_data(user_data):
     # Simulate data analysis (e.g., averages, summaries)
@@ -13,6 +15,42 @@ def get_generated_sleep_data() -> str :
     file_name = "generated_sleep_data.json"
     generate_sleep_profile(file_name)
     return load_and_format_sleep_data(file_name)
+
+def convert_sleep_data_to_prompt(file_path):
+    """
+    Reads a sleep data CSV file and converts it into a natural language prompt format.
+
+    Args:
+        file_path (str): Path to the CSV file containing sleep data.
+
+    Returns:
+        str: A string with the sleep data formatted for LLM prompts.
+    """
+    try:
+        # Load the CSV file
+        sleep_data = pd.read_csv(file_path)
+        
+        # Function to format a single row
+        def format_row(row):
+            date = pd.to_datetime(row['Date']).strftime('%B %d, %Y')
+            total_sleep = f"{row['Total Sleep']:.2f}"
+            rem_sleep = f"{row['REM Sleep']:.2f}"
+            deep_sleep = f"{row['Deep Sleep']:.2f}"
+            wake_status = row['Wake Status'].lower()
+            return (
+                f"On {date}, the total sleep was {total_sleep} minutes, including "
+                f"{rem_sleep} minutes of REM sleep and {deep_sleep} minutes of deep sleep. "
+                f"There was {wake_status}."
+            )
+        
+        # Apply the formatting to all rows
+        formatted_data = sleep_data.apply(format_row, axis=1)
+        
+        # Combine into a single string
+        return "\n".join(formatted_data)
+    
+    except Exception as e:
+        return f"An error occurred: {e}"
 
 def load_and_format_sleep_data(filename):
     """

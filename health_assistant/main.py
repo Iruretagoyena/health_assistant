@@ -1,5 +1,5 @@
 import os
-from health_assistant.data_processing import process_user_data, get_generated_sleep_data
+from health_assistant.data_processing import process_user_data, get_generated_sleep_data, convert_sleep_data_to_prompt
 from health_assistant.rag_system import create_rag_system
 from langchain.schema import SystemMessage
 from health_assistant.config import set_openai_key
@@ -37,8 +37,12 @@ def generate_health_schedule(state: State) -> State:
     system_message = SystemMessage(content="You are a knowledgeable assistant specializing in sleep science and health optimization. If the user provided his or her own sleep data, answer questions with some personalized health and sleep related recommendations and mention how to improve those data.")
     # Create a message list with the system message followed by the user query
     # Combine the system message content with the user query
-    generated_sleep_data = get_generated_sleep_data()
-    combined_query = f"{system_message.content}\n\n{generated_sleep_data}\n\n{state['query']}"
+    # generated_sleep_data = get_generated_sleep_data()
+    sleep_data = convert_sleep_data_to_prompt('documents/sleep_data_minutes.csv')
+    print("------sleep data------")
+    print(sleep_data)
+    print("------------")
+    combined_query = f"{system_message.content}\n\n{sleep_data}\n\n{state['query']}"
 
     response = rag_chain.invoke(combined_query)
     state['response'] = response
@@ -65,7 +69,9 @@ user_profile = {
     'steps': [10000, 12000, 9500, 11000, 12500],
     'heart_rate': [65, 70, 68, 72, 69]
 }
-user_query = "Create a wellness plan for improving sleep quality and menstrual cycle health."
+# user_query = "Create a wellness plan for improving sleep quality and menstrual cycle health."
+user_query = "How can I improve my sleep quality?"
+# user_query = "Do I have enough deep sleep and REM? How can I improve it?"
 
 # Run the graph with initial state
 initial_state = State(
