@@ -39,9 +39,9 @@ def generate_health_schedule(state: State) -> State:
     # Combine the system message content with the user query
     # generated_sleep_data = get_generated_sleep_data()
     sleep_data = convert_sleep_data_to_prompt('documents/sleep_data_minutes.csv')
-    print("------sleep data------")
-    print(sleep_data)
-    print("------------")
+    # print("------sleep data------")
+    # print(sleep_data)
+    # print("------------")
     combined_query = f"{system_message.content}\n\n{sleep_data}\n\n{state['query']}"
 
     response = rag_chain.invoke(combined_query)
