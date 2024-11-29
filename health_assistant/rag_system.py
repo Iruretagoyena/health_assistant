@@ -41,8 +41,17 @@ def create_rag_system(llm):
     try:
         faiss_index_obj = faiss.read_index("faiss_index.idx")
         with open("faiss_docstore.pkl", "rb") as f:
-            docstore = pickle.load(f)  # Load only the docstore
-        faiss_index = FAISS(faiss_index_obj, docstore)
+            docstore = pickle.load(f)  # Load the docstore directly
+        
+        # Create a new index_to_docstore_id mapping
+        index_to_docstore_id = {i: id_ for i, id_ in enumerate(docstore._dict.keys())}
+        
+        faiss_index = FAISS(
+            embedding_function=embedding_model,
+            index=faiss_index_obj,
+            docstore=docstore,
+            index_to_docstore_id=index_to_docstore_id
+        )
         print("FAISS index loaded successfully.")
     except RuntimeError:
         print("FAISS index not found. Creating a new index...")
