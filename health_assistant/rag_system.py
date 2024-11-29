@@ -61,7 +61,14 @@ def create_rag_system(llm):
         #     "Nutritional foods contribute to overall well-being."
         # ]
         print(os.getcwd())
-        texts = parse_docx_to_texts("documents/sleep_knowledge.docx")
+        sleep_knowledge = parse_docx_to_texts("documents/sleep_knowledge.docx")
+        # print(sleep_knowledge)
+        blueprint_protocal = parse_docx_to_texts("documents/blueprint_protocal.docx")
+        # print(blueprint_protocal)
+        sleep_nick_littlehales = parse_docx_to_texts("documents/sleep_nick_littlehales.docx")
+        period_power_summary = parse_docx_to_texts("documents/period_power_summary.docx")
+
+        texts = sleep_knowledge + blueprint_protocal + sleep_nick_littlehales + period_power_summary
         # print(texts)
         faiss_index = create_faiss_index(texts, embedding_model)
         print("FAISS index created and saved.")
