@@ -6,8 +6,12 @@ from health_assistant.main_demo import analyze_sleep_data
 # Retrieve the API key from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Welcome image URL (replace with an appropriate URL)
+WELCOME_IMAGE_URL = "assets/larger_image.jpg"
+HEADER_IMAGE_URL = "assets/header3.jpg"
+
 # Create a client instance
-client = openai.OpenAI()
+client = openai
 
 # Chatbot function to get responses from OpenAI's API
 def ask_openai(user_input, chat_history):
@@ -15,13 +19,13 @@ def ask_openai(user_input, chat_history):
         return chat_history + [(user_input, "API key is missing. Please set the OPENAI_API_KEY environment variable.")], ""
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "system", "content": "Please answer questions about health and medicine, especially for sleeping, eating, and exercise."}] + 
-                     [{"role": "user", "content": message} for message, _ in chat_history] + 
+        response = client.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "system", "content": "Please answer questions about health and medicine, especially for sleeping, eating, and exercise."}] +
+                     [{"role": "user", "content": message} for message, _ in chat_history] +
                      [{"role": "user", "content": user_input}]
         )
-        answer = response.choices[0].message.content.strip()
+        answer = response.choices[0].message['content'].strip()
         chat_history.append((user_input, answer))
     except Exception as e:
         chat_history.append((user_input, f"Error: {str(e)}"))
@@ -30,35 +34,45 @@ def ask_openai(user_input, chat_history):
 
 def create_chat_interface():
     with gr.Column():
-        chatbot = gr.Chatbot(label="Chatbot")
+        # Add header image
+        gr.Image(
+            value=HEADER_IMAGE_URL,
+            elem_classes="header-image",
+            show_label=False,
+            container=False,
+            type="filepath"
+        )
+        gr.Markdown("## Chat with Health Assistant")  # Added title
+        
+        chatbot = gr.Chatbot(
+            label="Chatbot",
+            height=400,
+            container=False,
+            scale=1,
+            elem_classes="full-width-chatbot"
+        )
         user_input = gr.Textbox(
-            label="Type your question here", 
+            label="Type your question here",
             placeholder="Ask a question..."
         )
         with gr.Row():
-            submit_button = gr.Button("Ask", variant="primary")
-            clear_button = gr.Button("Clear Chat")
-        
-        # Move back button to bottom and make it full width
+            submit_button = gr.Button("Ask", elem_classes="primary-button")
+            clear_button = gr.Button("Clear Chat", elem_classes="clear-button")
         with gr.Row():
-            back_to_input = gr.Button(
-                "← Back to Sleep Data", 
-                size="lg",  # Make it larger
-                scale=1,    # Take full width
-                min_width=100,
-                variant="secondary"  # Different style to distinguish from primary actions
-            )
+            back_to_input = gr.Button("Back", elem_classes="back-button")
     
     return chatbot, user_input, submit_button, clear_button, back_to_input
 
 def create_sleep_input_interface():
-    # Create a container for all elements
     with gr.Column():
-        # Remove back button from top
-        
-        # Sleep Analysis header
+        gr.Image(
+            value=HEADER_IMAGE_URL,
+            elem_classes="header-image",
+            show_label=False,
+            container=False,
+            type="filepath"
+        )
         gr.Markdown("## Sleep Data Analysis")
-        
         with gr.Row():
             deep_sleep = gr.Slider(
                 minimum=0, maximum=100, value=15,
@@ -68,7 +82,6 @@ def create_sleep_input_interface():
                 minimum=0, maximum=100, value=25,
                 label="REM Sleep Percentage (%)"
             )
-        
         with gr.Row():
             sleep_efficiency = gr.Slider(
                 minimum=0, maximum=100, value=85,
@@ -79,62 +92,126 @@ def create_sleep_input_interface():
                 step=0.5,
                 label="Total Sleep Time (hours)"
             )
-        
-        # Container for wake episodes
         with gr.Column():
             gr.Markdown("### Wake Episodes")
             time_options = [f"{str(h).zfill(2)}:00" for h in range(24)]
-            
             wake_times = gr.Dropdown(
                 choices=time_options,
                 label="Wake Episode Time",
                 multiselect=True,
                 value=None
             )
-            
             gr.Markdown("*Select times when you typically wake up (if any)*")
-        
-        analyze_button = gr.Button("Submit Sleep Data", variant="primary")
-        back_button = gr.Button("Back to Sleep Data", variant="secondary")
-    
+        analyze_button = gr.Button("Submit Sleep Data", elem_classes="primary-button")
+        back_button = gr.Button("Back", elem_classes="back-button")
     return deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button
 
-# Add some custom CSS to style the back button
 def add_custom_css():
     return gr.HTML("""
         <style>
-        .button-row {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
+        /* Header image adjustments */
+        .header-image {
+            width: 80% !important;
+            height: 300px !important;
+            object-fit: cover !important;
+            object-position: center 100% !important;
+            margin: 0 auto !important;
+            display: block !important;
         }
-        .button-row button {
-            flex: 1;
+
+        /* Welcome image adjustments */
+        .welcome-image {
+            width: 80% !important;
+            height: 400px !important;
+            object-fit: cover !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
+
+        /* Existing button colors (unchanged) */
+        .primary-button {
+            background-color: #0EA5E9 !important;
+            color: white !important;
+        }
+        .primary-button:hover {
+            background-color: #0284C7 !important;
+        }
+        
+        .secondary-button {
+            background-color: #22C55E !important;
+            color: white !important;
+        }
+        .secondary-button:hover {
+            background-color: #16A34A !important;
+        }
+        
+        .action-button {
+            background-color: #E67E22 !important;
+            color: white !important;
+        }
+        .action-button:hover {
+            background-color: #D35400 !important;
+        }
+        
+        .clear-button {
+            background-color: #F87171 !important;
+            color: white !important;
+        }
+        .clear-button:hover {
+            background-color: #EF4444 !important;
+        }
+        
+        .back-button {
+            background-color: #64748B !important;
+            color: white !important;
+        }
+        .back-button:hover {
+            background-color: #475569 !important;
         }
         </style>
     """)
 
-# Add a function to handle going back
 def show_initial_screen():
     return (
-        gr.update(visible=True),   # choice_buttons
-        gr.update(visible=False),  # sleep_input_container
-        gr.update(visible=False),  # device_msg
-        gr.update(visible=False)   # chat_container
+        gr.update(visible=True),   # Show initial_page
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=False),  # Hide device_msg
+        gr.update(visible=False)   # Hide chat_container
     )
 
+def show_manual_input():
+    return (
+        gr.update(visible=False),  # Hide initial_page (which contains welcome image)
+        gr.update(visible=True),   # Show sleep_input_container
+        gr.update(visible=False),  # Hide device_msg
+        gr.update(visible=False)   # Hide chat_container
+    )
+
+# Main welcome page with large image
 with gr.Blocks() as demo:
     add_custom_css()
-    gr.Markdown("# Your Personal Health Assistant")
     
-    # Initial choice buttons
-    with gr.Row(visible=True) as choice_buttons:
-        manual_input_btn = gr.Button("Provide Sleep Data Manually")
-        connect_device_btn = gr.Button("Connect with Health Device")
+    # Initial page with welcome image
+    with gr.Column(elem_classes="initial-page", visible=True) as initial_page:
+        gr.Markdown("# Your Personal Health Assistant")
+        
+        # Large image for welcome page only
+        gr.Image(
+            value=WELCOME_IMAGE_URL,
+            elem_classes="welcome-image",
+            show_label=False,
+            container=False,
+            type="filepath"
+        )
+        
+        # Initial choice buttons
+        with gr.Row(elem_classes="button-container", visible=True) as choice_buttons:
+            manual_input_btn = gr.Button("Provide Sleep Data Manually", elem_classes="primary-button")
+            connect_device_btn = gr.Button("Connect with Health Device", elem_classes="secondary-button")
     
-    # Device connection message (hidden by default)
+    # Device message (hidden by default)
     device_msg = gr.Markdown(
-        "Device connection feature is not implemented yet.", 
+        "Device connection feature is not implemented yet.",
         visible=False
     )
     
@@ -145,29 +222,7 @@ with gr.Blocks() as demo:
     # Chat interface (hidden by default)
     with gr.Column(visible=False) as chat_container:
         chatbot, user_input, submit_button, clear_button, back_to_input = create_chat_interface()
-        
-        # Add custom CSS
-        gr.HTML("""
-            <style>
-            .ask-button {
-                background-color: #28a745 !important;
-                border-color: #28a745 !important;
-            }
-            button.ask-button:hover {
-                background-color: #218838 !important;
-                border-color: #1e7e34 !important;
-            }
-            </style>
-        """)
     
-    def show_manual_input():
-        return (
-            gr.update(visible=False),  # choice_buttons
-            gr.update(visible=True),   # sleep_input_container
-            gr.update(visible=False),  # device_msg
-            gr.update(visible=False)   # chat_container
-        )
-
     def show_device_connection():
         return (
             gr.update(visible=False),  # choice_buttons
@@ -184,7 +239,6 @@ with gr.Blocks() as demo:
             'total_sleep_time': total_sleep_hrs,
             'wake_episodes': wake_times_list if wake_times_list else []
         }
-        
         insights = analyze_sleep_data(data)
         initial_message = "Based on your sleep data:\n" + "\n".join([f"- {insight}" for insight in insights])
         return (
@@ -195,8 +249,8 @@ with gr.Blocks() as demo:
     
     # Event handlers
     manual_input_btn.click(
-            show_manual_input,
-        outputs=[choice_buttons, sleep_input_container, device_msg, chat_container]
+        show_manual_input,
+        outputs=[initial_page, sleep_input_container, device_msg, chat_container]
     )
 
     connect_device_btn.click(
@@ -222,10 +276,9 @@ with gr.Blocks() as demo:
     # Add event handler for back button
     back_button.click(
         show_initial_screen,
-        outputs=[choice_buttons, sleep_input_container, device_msg, chat_container]
+        outputs=[initial_page, sleep_input_container, device_msg, chat_container]
     )
 
-    # Event handlers
     def show_sleep_input():
         return (
             gr.update(visible=True),   # Show sleep_input_container
