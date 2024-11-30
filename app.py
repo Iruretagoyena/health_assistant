@@ -117,14 +117,14 @@ def create_sleep_input_interface():
             )
         with gr.Column():
             gr.Markdown("### Wake Episodes")
-            time_options = [f"{str(h).zfill(2)}:00" for h in range(24)]
+            time_options = [f"{str(h).zfill(2)}:00" for h in range(0, 9)]
             wake_times = gr.Dropdown(
                 choices=time_options,
                 label="Wake Episode Time",
                 multiselect=True,
                 value=None
             )
-            gr.Markdown("*Select times when you typically wake up (if any)*")
+            gr.Markdown("*Select times when you typically wake up during night (midnight to 8 AM)*")
         analyze_button = gr.Button("Submit Sleep Data", elem_classes="primary-button")
         back_button = gr.Button("Back", elem_classes="back-button")
     return deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button
