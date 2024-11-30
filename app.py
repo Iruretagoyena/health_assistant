@@ -11,21 +11,44 @@ WELCOME_IMAGE_URL = "assets/larger_image.jpg"
 HEADER_IMAGE_URL = "assets/header3.jpg"
 
 # Create a client instance
-client = openai
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+# Add state management
+class SessionState:
+    def __init__(self):
+        self.sleep_data = None
+
+state = SessionState()
 
 # Chatbot function to get responses from OpenAI's API
 def ask_openai(user_input, chat_history):
-    if not openai.api_key:
-        return chat_history + [(user_input, "API key is missing. Please set the OPENAI_API_KEY environment variable.")], ""
+    if not state.sleep_data:
+        return chat_history + [(user_input, "Please provide your sleep data first.")], ""
 
     try:
-        response = client.ChatCompletion.create(
+        # Format messages properly, filtering out None values
+        messages = [
+            {"role": "system", "content": "Please answer questions about health and medicine, especially for sleeping, eating, and exercise."}
+        ]
+        
+        # Add chat history, only including valid messages
+        for msg, response in chat_history:
+            if msg:  # Add user message if it exists
+                messages.append({"role": "user", "content": str(msg)})
+            if response:  # Add assistant response if it exists
+                messages.append({"role": "assistant", "content": str(response)})
+        
+        # Add current user input
+        messages.append({"role": "user", "content": str(user_input)})
+
+        # Make API call
+        response = client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "system", "content": "Please answer questions about health and medicine, especially for sleeping, eating, and exercise."}] +
-                     [{"role": "user", "content": message} for message, _ in chat_history] +
-                     [{"role": "user", "content": user_input}]
+            messages=messages
         )
-        answer = response.choices[0].message['content'].strip()
+        answer = response.choices[0].message.content.strip()
         chat_history.append((user_input, answer))
     except Exception as e:
         chat_history.append((user_input, f"Error: {str(e)}"))
@@ -187,6 +210,14 @@ def show_manual_input():
         gr.update(visible=False)   # Hide chat_container
     )
 
+def show_device_connection():
+    return (
+        gr.update(visible=False),  # Hide initial_page
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=True),   # Show device_msg
+        gr.update(visible=False)   # Hide chat_container
+    )
+
 # Main welcome page with large image
 with gr.Blocks() as demo:
     add_custom_css()
@@ -209,11 +240,18 @@ with gr.Blocks() as demo:
             manual_input_btn = gr.Button("Provide Sleep Data Manually", elem_classes="primary-button")
             connect_device_btn = gr.Button("Connect with Health Device", elem_classes="secondary-button")
     
-    # Device message (hidden by default)
-    device_msg = gr.Markdown(
-        "Device connection feature is not implemented yet.",
-        visible=False
-    )
+    # Device message page
+    with gr.Column(visible=False) as device_msg:
+        gr.Image(
+            value=HEADER_IMAGE_URL,
+            elem_classes="header-image",
+            show_label=False,
+            container=False,
+            type="filepath"
+        )
+        gr.Markdown("## Device Connection")
+        gr.Markdown("The device connection feature is not implemented yet. Please use manual input instead.")
+        back_to_main = gr.Button("Back", elem_classes="back-button")
     
     # Sleep data input container (hidden by default)
     with gr.Column(visible=False) as sleep_input_container:
@@ -223,14 +261,6 @@ with gr.Blocks() as demo:
     with gr.Column(visible=False) as chat_container:
         chatbot, user_input, submit_button, clear_button, back_to_input = create_chat_interface()
     
-    def show_device_connection():
-        return (
-            gr.update(visible=False),  # choice_buttons
-            gr.update(visible=False),  # sleep_input_container
-            gr.update(visible=True),   # device_msg
-            gr.update(visible=False)   # chat_container
-        )
-    
     def process_sleep_data(deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
         data = {
             'deep_sleep_percentage': deep_sleep_pct,
@@ -239,12 +269,13 @@ with gr.Blocks() as demo:
             'total_sleep_time': total_sleep_hrs,
             'wake_episodes': wake_times_list if wake_times_list else []
         }
+        state.sleep_data = data  # Store the data in state
         insights = analyze_sleep_data(data)
         initial_message = "Based on your sleep data:\n" + "\n".join([f"- {insight}" for insight in insights])
         return (
             gr.update(visible=False),  # Hide sleep_input_container
             gr.update(visible=True),   # Show chat_container
-            [[None, initial_message]]  # chatbot
+            [[None, initial_message]]  # Initial chatbot message
         )
     
     # Event handlers
@@ -255,7 +286,7 @@ with gr.Blocks() as demo:
 
     connect_device_btn.click(
         show_device_connection,
-        outputs=[choice_buttons, sleep_input_container, device_msg, chat_container]
+        outputs=[initial_page, sleep_input_container, device_msg, chat_container]
     )
 
     analyze_button.click(
@@ -290,6 +321,11 @@ with gr.Blocks() as demo:
     back_to_input.click(
         fn=show_sleep_input,
         outputs=[sleep_input_container, chat_container, chatbot]
+    )
+
+    back_to_main.click(
+        show_initial_screen,
+        outputs=[initial_page, sleep_input_container, device_msg, chat_container]
     )
 
 # Launch the app
