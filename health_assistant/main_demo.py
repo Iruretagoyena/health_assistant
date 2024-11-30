@@ -45,20 +45,35 @@ llm = ChatOpenAI(model_name="gpt-4", api_key=api_key)
 rag_chain = create_rag_system(llm)
 
 def analyze_sleep_data(data: dict) -> List[str]:
-   """
-   TODO: Replace with actual sleep data analysis
-   Currently using mock data for demonstration
-   """
-   deep_sleep = data.get('deep_sleep_percentage', 15.0)
-   efficiency = data.get('sleep_efficiency', 85.0)
-   wake_episodes = data.get('wake_episodes', ["2:00 AM"])[0]
-   
-   insights = []
-   insights.append(f"Your deep sleep is {deep_sleep}% (optimal range: 20-23%)")
-   insights.append(f"Your sleep efficiency is at {efficiency}%, which could be improved")
-   insights.append(f"You have frequent wake episodes around {wake_episodes}")
-   
-   return insights
+    """
+    Analyze sleep data and provide insights
+    """
+    print("Received data in analyze_sleep_data:", data)
+    
+    deep_sleep = data.get('deep_sleep_percentage', 15.0)
+    rem_sleep = data.get('rem_percentage', 25.0)
+    efficiency = data.get('sleep_efficiency', 85.0)
+    total_sleep = data.get('total_sleep_time', 7.0)
+    wake_episodes = data.get('wake_episodes', [])
+    
+    print("Wake episodes in analyze_sleep_data:", wake_episodes)
+    
+    insights = []
+    insights.append(f"Your deep sleep is {deep_sleep}% (optimal range: 20-23%)")
+    insights.append(f"Your REM sleep is {rem_sleep}% (optimal range: 20-25%)")
+    insights.append(f"Your sleep efficiency is at {efficiency}%, which could be improved")
+    insights.append(f"You're getting {total_sleep} hours of sleep (recommended: 7-9 hours)")
+    
+    # Handle wake episodes
+    if wake_episodes:
+        if len(wake_episodes) == 1:
+            insights.append(f"You have a wake episode at {wake_episodes[0]}")
+        else:
+            insights.append(f"You have wake episodes at: {', '.join(wake_episodes)}")
+    else:
+        insights.append("No significant wake episodes recorded")
+    
+    return insights
 
 def process_data(state: State) -> State:
    """First agent: Process and analyze sleep data"""
@@ -67,7 +82,8 @@ def process_data(state: State) -> State:
 
 def retrieve_knowledge(state: State) -> State:
    """Second agent: Get relevant sleep science knowledge"""
-   sleep_data = convert_sleep_data_to_prompt('documents/sleep_data_minutes.csv')
+#    sleep_data = convert_sleep_data_to_prompt('documents/sleep_data_minutes.csv')
+   sleep_data = "\n".join(state['insights'])
    system_message = SystemMessage(content="You are a sleep expert. Using the sleep science knowledge base, provide evidence-based insights.")
    
    query = f"{system_message.content}\n\n{sleep_data}\n\n{state['query']}"
