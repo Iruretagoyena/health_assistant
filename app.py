@@ -1,7 +1,7 @@
 import gradio as gr
 import openai
 import os
-from health_assistant.main_demo import analyze_sleep_data
+from health_assistant.main_demo import State, run, generate_response, retrieve_knowledge, process_data
 
 # Retrieve the API key from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -20,8 +20,48 @@ class SessionState:
     def __init__(self):
         self.sleep_data = None
         self.user_metrics = None
+        self.insights = None
 
 state = SessionState()
+rag_state = None
+def ask_rag_system(user_input, chat_history):
+    global rag_state
+    if not state.sleep_data:
+        return chat_history + [(user_input, "Please provide your sleep data first.")], ""
+
+    try:
+        if rag_state is None:
+            rag_state = State(
+                user_data=state.sleep_data,
+                user_metrics=state.user_metrics,
+                query=user_input,
+                conversation_state={
+                    'stage': 'initial'
+                },
+                response="",
+                insights=state.insights
+            )
+            rag_state = process_data(rag_state)
+            rag_state = retrieve_knowledge(rag_state)
+            rag_state = generate_response(rag_state)
+            # rag_state = run(rag_state)
+            # print(">>>>> Debug - rag_state after retrieve_knowledge:", rag_state)
+            chat_history.append((user_input, rag_state['response']))
+
+        else:
+            rag_state["query"] = user_input
+            rag_state = generate_response(rag_state)
+            print(">>>>> Debug - rag_state after generate_response:", rag_state)
+            chat_history.append((user_input, rag_state['response']))
+        # Call run() with the state object and user input
+        # rag_state["query"] = user_input
+        # rag_state = run(rag_state)
+        # response_text = rag_state.get('result', {}).get('response', rag_state.get('response', ''))
+        # chat_history.append((user_input, rag_state['response']['result']))
+    except Exception as e:
+        chat_history.append((user_input, f"Error: {str(e)}"))
+
+    return chat_history, ""
 
 # Chatbot function to get responses from OpenAI's API
 def ask_openai(user_input, chat_history):
@@ -233,7 +273,6 @@ def show_device_connection():
         gr.update(visible=True),   # Show device_msg
         gr.update(visible=False)   # Hide chat_container
     )
-
 # Main welcome page with large image
 with gr.Blocks() as demo:
     add_custom_css()
@@ -278,12 +317,15 @@ with gr.Blocks() as demo:
         chatbot, user_input, submit_button, clear_button, back_to_input = create_chat_interface()
     
     def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
+        global rag_state
+        rag_state = None
+        
         user_metrics = {
             'age': age,
             'weight': weight,
             'height': height
         }
-        state.user_metrics = user_metrics  # Store user metrics in state
+        state.user_metrics = user_metrics
         
         data = {
             'deep_sleep_percentage': deep_sleep_pct,
@@ -292,10 +334,22 @@ with gr.Blocks() as demo:
             'total_sleep_time': total_sleep_hrs,
             'wake_episodes': wake_times_list if wake_times_list else []
         }
-        state.sleep_data = data  # Store the data in state
+        state.sleep_data = data
         
-        insights = analyze_sleep_data(data, user_metrics)  # Pass user metrics to analysis
-        initial_message = "Based on your sleep data:\n" + "\n".join([f"- {insight}" for insight in insights])
+        state.insights = []
+        initial_message = (
+            f"I received your information:\n"
+            f"- Age: {user_metrics['age']} years\n"
+            f"- Weight: {user_metrics['weight']} kg\n"
+            f"- Height: {user_metrics['height']} cm\n\n"
+            f"Your sleep data:\n"
+            f"- Deep Sleep: {data['deep_sleep_percentage']}%\n"
+            f"- REM Sleep: {data['rem_percentage']}%\n"
+            f"- Sleep Efficiency: {data['sleep_efficiency']}%\n"
+            f"- Total Sleep Time: {data['total_sleep_time']} hours\n"
+            f"- Wake Episodes: {', '.join(data['wake_episodes']) if data['wake_episodes'] else 'None'}\n\n"
+            "Do you want me to analyze your sleep data and create a personalized sleep schedule?"
+        )
         return (
             gr.update(visible=False),  # Hide sleep_input_container
             gr.update(visible=True),   # Show chat_container
@@ -320,8 +374,8 @@ with gr.Blocks() as demo:
     )
     
     # Chat functionality
-    submit_button.click(ask_openai, [user_input, chatbot], [chatbot, user_input])
-    user_input.submit(ask_openai, [user_input, chatbot], [chatbot, user_input])
+    submit_button.click(ask_rag_system, [user_input, chatbot], [chatbot, user_input])
+    user_input.submit(ask_rag_system, [user_input, chatbot], [chatbot, user_input])
     
     def clear_chat():
         return [], ""
