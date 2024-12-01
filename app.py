@@ -22,6 +22,7 @@ class SessionState:
         self.sleep_data = None
         self.user_metrics = None
         self.insights = None
+        self.from_device = False
 
 state = SessionState()
 rag_state = None
@@ -323,6 +324,7 @@ def process_device_data():
     )
 
 def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
+    state.from_device = False
     global rag_state
     rag_state = None
     
@@ -397,9 +399,11 @@ def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_
 
     state.insights = insights
     
-    # Return just the message string
+    # Update the return statement to match the expected format
     return (
-        f"Sleep analysis summary:\n\n"
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=True),   # Show chat_container
+        [(None, f"Sleep analysis summary:\n\n"  # Update chatbot with initial message
         f"Personal profile:\n"
         f"- Age: {user_metrics['age']} years, height: {user_metrics['height']} cm, weight: {user_metrics['weight']} kg\n"
         f"- BMI: {user_metrics['bmi']} ({next(insight for insight in insights if 'BMI' in insight).split('BMI')[1].strip()})\n\n"
@@ -416,30 +420,37 @@ def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_
         # f"More detailed analysis:\n"
         # f"{rag_state['knowledge']}\n\n"
 
-        "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?"
+        "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?")]
     )
 
 def simulate_loading_and_process():
+    state.from_device = True
     time.sleep(2)  # Simulate loading delay
     data = MOCK_HEALTH_DATA
     
-    # Process data and get message
-    message = process_sleep_data(
-        age=data["user_profile"]["age"],
-        weight=data["user_profile"]["weight"],
-        height=data["user_profile"]["height"],
-        deep_sleep_pct=data["sleep_metrics"]["deep_sleep_percentage"],
-        rem_pct=data["sleep_metrics"]["rem_percentage"],
-        efficiency_pct=data["sleep_metrics"]["sleep_efficiency"],
-        total_sleep_hrs=data["sleep_metrics"]["total_sleep_time"],
-        wake_times_list=data["sleep_metrics"]["wake_episodes"]
-    )
+    # Process the mock data
+    message = f"Sleep analysis summary:\n\n" \
+             f"Personal profile:\n" \
+             f"- Age: {data['user_profile']['age']} years, height: {data['user_profile']['height']} cm, weight: {data['user_profile']['weight']} kg\n" \
+             f"- BMI: {round(data['user_profile']['weight'] / ((data['user_profile']['height']/100) ** 2), 1)}\n\n" \
+             f"Sleep duration:\n" \
+             f"- {data['sleep_metrics']['total_sleep_time']} hours\n\n" \
+             f"Sleep quality breakdown:\n" \
+             f"- Deep sleep: {data['sleep_metrics']['deep_sleep_percentage']}%\n" \
+             f"- REM sleep: {data['sleep_metrics']['rem_percentage']}%\n" \
+             f"- Sleep efficiency: {data['sleep_metrics']['sleep_efficiency']}%\n" \
+             f"- Wake episodes: {', '.join(data['sleep_metrics']['wake_episodes'])}\n\n" \
+             "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?"
+    
+    # Store the data in state for future use
+    state.sleep_data = data['sleep_metrics']
+    state.user_metrics = data['user_profile']
     
     # Return updates for all components
     return [
         gr.update(visible=False),  # Hide sleep_input_container
         gr.update(visible=True),   # Show chat_container
-        [(None, message)],         # Update chatbot with tuple
+        [(None, message)],         # Update chatbot with initial message
         gr.update(visible=False)   # Hide loading_container
     ]
 
@@ -535,16 +546,26 @@ with gr.Blocks() as demo:
     )
 
     def show_sleep_input():
-        return (
-            gr.update(visible=True),   # Show sleep_input_container
-            gr.update(visible=False),  # Hide chat_container
-            []  # Clear chatbot
-        )
+        if state.from_device:
+            state.from_device = False
+            return (
+                gr.update(visible=False),  # Hide sleep_input_container
+                gr.update(visible=False),  # Hide chat_container
+                [],  # Clear chatbot
+                gr.update(visible=True)    # Show initial_page
+            )
+        else:
+            return (
+                gr.update(visible=True),   # Show sleep_input_container
+                gr.update(visible=False),  # Hide chat_container
+                [],  # Clear chatbot
+                gr.update(visible=False)   # Hide initial_page
+            )
     
     # Connect the back button click event
     back_to_input.click(
         fn=show_sleep_input,
-        outputs=[sleep_input_container, chat_container, chatbot]
+        outputs=[sleep_input_container, chat_container, chatbot, initial_page]
     )
 
     back_to_main.click(
