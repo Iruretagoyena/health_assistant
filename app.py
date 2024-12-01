@@ -2,6 +2,7 @@ import gradio as gr
 import openai
 import os
 from health_assistant.main_demo import State, run, generate_response, retrieve_knowledge, process_data
+import time
 
 # Retrieve the API key from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -24,6 +25,26 @@ class SessionState:
 
 state = SessionState()
 rag_state = None
+
+# Add this near the top of your file with other constants
+MOCK_HEALTH_DATA = {
+    "user_profile": {
+        "age": 32,
+        "weight": 68.5,  # in kg
+        "height": 172,   # in cm
+    },
+    "sleep_metrics": {
+        "deep_sleep_percentage": 18,
+        "rem_percentage": 23,
+        "sleep_efficiency": 87,
+        "total_sleep_time": 7.5,  # in hours
+        "wake_episodes": ["02:30", "04:15"]  # Sample wake times
+    }
+}
+
+# Add loading image constant
+# LOADING_IMAGE_URL = "assets/loading.jpg"  # Remove this line
+
 def ask_rag_system(user_input, chat_history):
     global rag_state
     if not state.sleep_data:
@@ -273,6 +294,155 @@ def show_device_connection():
         gr.update(visible=True),   # Show device_msg
         gr.update(visible=False)   # Hide chat_container
     )
+
+def show_loading_screen():
+    return (
+        gr.update(visible=False),  # Hide initial_page
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=True),   # Show loading_container
+        gr.update(visible=False)   # Hide chat_container
+    )
+
+def process_device_data():
+    # Simulate device data processing using the mock data
+    data = MOCK_HEALTH_DATA
+    return (
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=True),   # Show chat_container
+        [[None, process_sleep_data(
+            age=data["user_profile"]["age"],
+            weight=data["user_profile"]["weight"],
+            height=data["user_profile"]["height"],
+            deep_sleep_pct=data["sleep_metrics"]["deep_sleep_percentage"],
+            rem_pct=data["sleep_metrics"]["rem_percentage"],
+            efficiency_pct=data["sleep_metrics"]["sleep_efficiency"],
+            total_sleep_hrs=data["sleep_metrics"]["total_sleep_time"],
+            wake_times_list=data["sleep_metrics"]["wake_episodes"]
+        )]],
+        gr.update(visible=False)   # Hide loading_container
+    )
+
+def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
+    global rag_state
+    rag_state = None
+    
+    # Store raw metrics
+    user_metrics = {
+        'age': age,
+        'weight': weight,
+        'height': height,
+        'bmi': round(weight / ((height/100) ** 2), 1)  # Calculate BMI
+    }
+    state.user_metrics = user_metrics
+    
+    # Store raw sleep data
+    data = {
+        'deep_sleep_percentage': deep_sleep_pct,
+        'rem_percentage': rem_pct,
+        'sleep_efficiency': efficiency_pct,
+        'total_sleep_time': total_sleep_hrs,
+        'wake_episodes': wake_times_list if wake_times_list else []
+    }
+    state.sleep_data = data
+    
+    # Analyze sleep data against standard ranges
+    insights = []
+    
+    # Sleep duration analysis (7-9 hours recommended for adults)
+    if total_sleep_hrs < 7:
+        insights.append("You're getting less than the recommended 7-9 hours of sleep")
+    elif total_sleep_hrs > 9:
+        insights.append("You're getting more than the recommended 7-9 hours of sleep")
+    else:
+        insights.append("Your sleep duration is within the recommended 7-9 hours range")
+    
+    # Deep sleep analysis (15-25% is optimal)
+    if deep_sleep_pct < 15:
+        insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is below the optimal range of 15-25%")
+    elif deep_sleep_pct > 25:
+        insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is above the optimal range of 15-25%")
+    else:
+        insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is within the optimal range of 15-25%")
+    
+    # REM sleep analysis (20-25% is optimal)
+    if rem_pct < 20:
+        insights.append(f"Your REM sleep percentage ({rem_pct}%) is below the optimal range of 20-25%")
+    elif rem_pct > 25:
+        insights.append(f"Your REM sleep percentage ({rem_pct}%) is above the optimal range of 20-25%")
+    else:
+        insights.append(f"Your REM sleep percentage ({rem_pct}%) is within the optimal range of 20-25%")
+    
+    # Sleep efficiency analysis (>85% is considered good)
+    if efficiency_pct < 85:
+        insights.append(f"Your sleep efficiency ({efficiency_pct}%) is below optimal (>85%)")
+    else:
+        insights.append(f"Your sleep efficiency ({efficiency_pct}%) is good (optimal is >85%)")
+    
+    # Wake episodes analysis
+    if wake_times_list:
+        insights.append(f"You had {len(wake_times_list)} wake episodes during your sleep at: {', '.join(wake_times_list)}")
+    else:
+        insights.append("You had no recorded wake episodes during your sleep")
+    
+    # BMI analysis
+    bmi = user_metrics['bmi']
+    if bmi < 18.5:
+        insights.append(f"Your BMI ({bmi}) indicates you are underweight")
+    elif 18.5 <= bmi < 25:
+        insights.append(f"Your BMI ({bmi}) is within the healthy range")
+    elif 25 <= bmi < 30:
+        insights.append(f"Your BMI ({bmi}) indicates you are overweight")
+    else:
+        insights.append(f"Your BMI ({bmi}) indicates obesity")
+
+    state.insights = insights
+    
+    # Return just the message string
+    return (
+        f"Sleep analysis summary:\n\n"
+        f"Personal profile:\n"
+        f"- Age: {user_metrics['age']} years, height: {user_metrics['height']} cm, weight: {user_metrics['weight']} kg\n"
+        f"- BMI: {user_metrics['bmi']} ({next(insight for insight in insights if 'BMI' in insight).split('BMI')[1].strip()})\n\n"
+        
+        f"Sleep duration:\n"
+        f"- {data['total_sleep_time']} hours - {next(insight for insight in insights if 'recommended 7-9 hours' in insight)}\n\n"
+        
+        f"Sleep quality breakdown:\n"
+        f"- Deep sleep: {data['deep_sleep_percentage']}% - {next(insight for insight in insights if 'deep sleep percentage' in insight).split('Your deep sleep percentage')[1].split('is')[1].strip()}\n"
+        f"- REM sleep: {data['rem_percentage']}% - {next(insight for insight in insights if 'REM sleep percentage' in insight).split('Your REM sleep percentage')[1].split('is')[1].strip()}\n"
+        f"- Sleep efficiency: {data['sleep_efficiency']}% - {next(insight for insight in insights if 'sleep efficiency' in insight).split('Your sleep efficiency')[1].split('is')[1].strip()}\n"
+        f"- Wake episodes: {next(insight for insight in insights if 'wake episodes' in insight).split('You had')[1].strip()}\n\n"
+        
+        # f"More detailed analysis:\n"
+        # f"{rag_state['knowledge']}\n\n"
+
+        "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?"
+    )
+
+def simulate_loading_and_process():
+    time.sleep(2)  # Simulate loading delay
+    data = MOCK_HEALTH_DATA
+    
+    # Process data and get message
+    message = process_sleep_data(
+        age=data["user_profile"]["age"],
+        weight=data["user_profile"]["weight"],
+        height=data["user_profile"]["height"],
+        deep_sleep_pct=data["sleep_metrics"]["deep_sleep_percentage"],
+        rem_pct=data["sleep_metrics"]["rem_percentage"],
+        efficiency_pct=data["sleep_metrics"]["sleep_efficiency"],
+        total_sleep_hrs=data["sleep_metrics"]["total_sleep_time"],
+        wake_times_list=data["sleep_metrics"]["wake_episodes"]
+    )
+    
+    # Return updates for all components
+    return [
+        gr.update(visible=False),  # Hide sleep_input_container
+        gr.update(visible=True),   # Show chat_container
+        [(None, message)],         # Update chatbot with tuple
+        gr.update(visible=False)   # Hide loading_container
+    ]
+
 # Main welcome page with large image
 with gr.Blocks() as demo:
     add_custom_css()
@@ -316,108 +486,17 @@ with gr.Blocks() as demo:
     with gr.Column(visible=False) as chat_container:
         chatbot, user_input, submit_button, clear_button, back_to_input = create_chat_interface()
     
-    def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
-        global rag_state
-        rag_state = None
-        
-        # Store raw metrics
-        user_metrics = {
-            'age': age,
-            'weight': weight,
-            'height': height,
-            'bmi': round(weight / ((height/100) ** 2), 1)  # Calculate BMI
-        }
-        state.user_metrics = user_metrics
-        
-        # Store raw sleep data
-        data = {
-            'deep_sleep_percentage': deep_sleep_pct,
-            'rem_percentage': rem_pct,
-            'sleep_efficiency': efficiency_pct,
-            'total_sleep_time': total_sleep_hrs,
-            'wake_episodes': wake_times_list if wake_times_list else []
-        }
-        state.sleep_data = data
-        
-        # Analyze sleep data against standard ranges
-        insights = []
-        
-        # Sleep duration analysis (7-9 hours recommended for adults)
-        if total_sleep_hrs < 7:
-            insights.append("You're getting less than the recommended 7-9 hours of sleep")
-        elif total_sleep_hrs > 9:
-            insights.append("You're getting more than the recommended 7-9 hours of sleep")
-        else:
-            insights.append("Your sleep duration is within the recommended 7-9 hours range")
-        
-        # Deep sleep analysis (15-25% is optimal)
-        if deep_sleep_pct < 15:
-            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is below the optimal range of 15-25%")
-        elif deep_sleep_pct > 25:
-            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is above the optimal range of 15-25%")
-        else:
-            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is within the optimal range of 15-25%")
-        
-        # REM sleep analysis (20-25% is optimal)
-        if rem_pct < 20:
-            insights.append(f"Your REM sleep percentage ({rem_pct}%) is below the optimal range of 20-25%")
-        elif rem_pct > 25:
-            insights.append(f"Your REM sleep percentage ({rem_pct}%) is above the optimal range of 20-25%")
-        else:
-            insights.append(f"Your REM sleep percentage ({rem_pct}%) is within the optimal range of 20-25%")
-        
-        # Sleep efficiency analysis (>85% is considered good)
-        if efficiency_pct < 85:
-            insights.append(f"Your sleep efficiency ({efficiency_pct}%) is below optimal (>85%)")
-        else:
-            insights.append(f"Your sleep efficiency ({efficiency_pct}%) is good (optimal is >85%)")
-        
-        # Wake episodes analysis
-        if wake_times_list:
-            insights.append(f"You had {len(wake_times_list)} wake episodes during your sleep at: {', '.join(wake_times_list)}")
-        else:
-            insights.append("You had no recorded wake episodes during your sleep")
-        
-        # BMI analysis
-        bmi = user_metrics['bmi']
-        if bmi < 18.5:
-            insights.append(f"Your BMI ({bmi}) indicates you are underweight")
-        elif 18.5 <= bmi < 25:
-            insights.append(f"Your BMI ({bmi}) is within the healthy range")
-        elif 25 <= bmi < 30:
-            insights.append(f"Your BMI ({bmi}) indicates you are overweight")
-        else:
-            insights.append(f"Your BMI ({bmi}) indicates obesity")
-
-        state.insights = insights
-        
-        # Create initial message with integrated analysis
-        initial_message = (
-            f"Sleep analysis summary:\n\n"
-            f"Personal profile:\n"
-            f"- Age: {user_metrics['age']} years, height: {user_metrics['height']} cm, weight: {user_metrics['weight']} kg\n"
-            f"- BMI: {user_metrics['bmi']} ({next(insight for insight in insights if 'BMI' in insight).split('BMI')[1].strip()})\n\n"
-            
-            f"Sleep duration:\n"
-            f"- {data['total_sleep_time']} hours - {next(insight for insight in insights if 'recommended 7-9 hours' in insight)}\n\n"
-            
-            f"Sleep quality breakdown:\n"
-            f"- Deep sleep: {data['deep_sleep_percentage']}% - {next(insight for insight in insights if 'deep sleep percentage' in insight).split('Your deep sleep percentage')[1].split('is')[1].strip()}\n"
-            f"- REM sleep: {data['rem_percentage']}% - {next(insight for insight in insights if 'REM sleep percentage' in insight).split('Your REM sleep percentage')[1].split('is')[1].strip()}\n"
-            f"- Sleep efficiency: {data['sleep_efficiency']}% - {next(insight for insight in insights if 'sleep efficiency' in insight).split('Your sleep efficiency')[1].split('is')[1].strip()}\n"
-            f"- Wake episodes: {next(insight for insight in insights if 'wake episodes' in insight).split('You had')[1].strip()}\n\n"
-            
-            # f"More detailed analysis:\n"
-            # f"{rag_state['knowledge']}\n\n"
-
-            "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?"
+    # Update loading screen container
+    with gr.Column(visible=False) as loading_container:
+        gr.Image(
+            value=HEADER_IMAGE_URL,
+            elem_classes="header-image",
+            show_label=False,
+            container=False,
+            type="filepath"
         )
-        
-        return (
-            gr.update(visible=False),
-            gr.update(visible=True),
-            [[None, initial_message]]
-        )
+        gr.Markdown("## Connecting to Apple Health")
+        gr.Markdown("Retrieving your sleep metrics and personal data...")
     
     # Event handlers
     manual_input_btn.click(
@@ -425,9 +504,13 @@ with gr.Blocks() as demo:
         outputs=[initial_page, sleep_input_container, device_msg, chat_container]
     )
 
+    # Update the connect device button click handler
     connect_device_btn.click(
-        show_device_connection,
-        outputs=[initial_page, sleep_input_container, device_msg, chat_container]
+        show_loading_screen,
+        outputs=[initial_page, sleep_input_container, loading_container, chat_container]
+    ).then(
+        simulate_loading_and_process,
+        outputs=[sleep_input_container, chat_container, chatbot, loading_container]
     )
 
     analyze_button.click(
