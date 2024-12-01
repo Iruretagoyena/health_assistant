@@ -269,6 +269,32 @@ def add_custom_css():
         .back-button:hover {
             background-color: #475569 !important;
         }
+
+        /* Add these new styles */
+        .loading-text-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .loading-text-container h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .loading-text-container p {
+            font-size: 20px;
+            color: #4B5563;
+        }
+
+        /* Add loading gif style */
+        .loading-gif {
+            width: 200px !important;  /* Adjust this value as needed */
+            height: auto !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
         </style>
     """)
 
@@ -506,8 +532,22 @@ with gr.Blocks() as demo:
             container=False,
             type="filepath"
         )
-        gr.Markdown("## Connecting to Apple Health")
-        gr.Markdown("Retrieving your sleep metrics and personal data...")
+        gr.Image(
+            value="assets/loading.gif",
+            show_label=False,
+            container=False,
+            type="filepath",
+            elem_classes="loading-gif"
+        )
+        gr.Progress()
+        with gr.Column(elem_classes="loading-text-container"):
+            gr.Markdown(
+                """
+                <div style='text-align: center; font-size: 24px; margin: 20px 0;'>
+                    <h2>Connecting with Apple Health and loading the data...</h2>
+                </div>
+                """
+            )
     
     # Event handlers
     manual_input_btn.click(
