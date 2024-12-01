@@ -19,6 +19,7 @@ client = openai.OpenAI(
 class SessionState:
     def __init__(self):
         self.sleep_data = None
+        self.user_metrics = None
 
 state = SessionState()
 
@@ -95,6 +96,21 @@ def create_sleep_input_interface():
             container=False,
             type="filepath"
         )
+        gr.Markdown("## User Information")
+        with gr.Row():
+            age = gr.Number(
+                minimum=1, maximum=120, value=30,
+                label="Age (years)"
+            )
+            weight = gr.Number(
+                minimum=20, maximum=300, value=70,
+                label="Weight (kg)"
+            )
+            height = gr.Number(
+                minimum=100, maximum=250, value=170,
+                label="Height (cm)"
+            )
+        
         gr.Markdown("## Sleep Data Analysis")
         with gr.Row():
             deep_sleep = gr.Slider(
@@ -127,7 +143,7 @@ def create_sleep_input_interface():
             gr.Markdown("*Select times when you typically wake up during night (midnight to 8 AM)*")
         analyze_button = gr.Button("Submit Sleep Data", elem_classes="primary-button")
         back_button = gr.Button("Back", elem_classes="back-button")
-    return deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button
+    return age, weight, height, deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button
 
 def add_custom_css():
     return gr.HTML("""
@@ -255,13 +271,20 @@ with gr.Blocks() as demo:
     
     # Sleep data input container (hidden by default)
     with gr.Column(visible=False) as sleep_input_container:
-        deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button = create_sleep_input_interface()
+        age, weight, height, deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times, analyze_button, back_button = create_sleep_input_interface()
     
     # Chat interface (hidden by default)
     with gr.Column(visible=False) as chat_container:
         chatbot, user_input, submit_button, clear_button, back_to_input = create_chat_interface()
     
-    def process_sleep_data(deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
+    def process_sleep_data(age, weight, height, deep_sleep_pct, rem_pct, efficiency_pct, total_sleep_hrs, wake_times_list):
+        user_metrics = {
+            'age': age,
+            'weight': weight,
+            'height': height
+        }
+        state.user_metrics = user_metrics  # Store user metrics in state
+        
         data = {
             'deep_sleep_percentage': deep_sleep_pct,
             'rem_percentage': rem_pct,
@@ -270,7 +293,8 @@ with gr.Blocks() as demo:
             'wake_episodes': wake_times_list if wake_times_list else []
         }
         state.sleep_data = data  # Store the data in state
-        insights = analyze_sleep_data(data)
+        
+        insights = analyze_sleep_data(data, user_metrics)  # Pass user metrics to analysis
         initial_message = "Based on your sleep data:\n" + "\n".join([f"- {insight}" for insight in insights])
         return (
             gr.update(visible=False),  # Hide sleep_input_container
@@ -291,7 +315,7 @@ with gr.Blocks() as demo:
 
     analyze_button.click(
         process_sleep_data,
-        inputs=[deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times],
+        inputs=[age, weight, height, deep_sleep, rem_sleep, sleep_efficiency, total_sleep, wake_times],
         outputs=[sleep_input_container, chat_container, chatbot]
     )
     

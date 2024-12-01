@@ -34,6 +34,7 @@ class ConversationState(TypedDict):
 
 class State(TypedDict):
    user_data: dict
+   user_metrics: dict
    query: str
    response: str
    conversation_state: ConversationState
@@ -44,44 +45,72 @@ api_key = set_openai_key()
 llm = ChatOpenAI(model_name="gpt-4", api_key=api_key)
 rag_chain = create_rag_system(llm)
 
-def analyze_sleep_data(data: dict) -> List[str]:
-    """
-    Analyze sleep data and provide insights
-    """
-    print("Received data in analyze_sleep_data:", data)
-    
-    deep_sleep = data.get('deep_sleep_percentage', 15.0)
-    rem_sleep = data.get('rem_percentage', 25.0)
-    efficiency = data.get('sleep_efficiency', 85.0)
-    total_sleep = data.get('total_sleep_time', 7.0)
-    wake_episodes = data.get('wake_episodes', [])
-    
-    print("Wake episodes in analyze_sleep_data:", wake_episodes)
-    
+def analyze_sleep_data(sleep_data, user_metrics):
+    """Analyze sleep data and provide insights"""
     insights = []
-    insights.append(f"Your deep sleep is {deep_sleep}% (optimal range: 20-23%)")
-    insights.append(f"Your REM sleep is {rem_sleep}% (optimal range: 20-25%)")
-    insights.append(f"Your sleep efficiency is at {efficiency}%, which could be improved")
-    insights.append(f"You're getting {total_sleep} hours of sleep (recommended: 7-9 hours)")
+    print("Debug - Starting sleep data analysis")
     
-    # Handle wake episodes
-    if wake_episodes:
-        if len(wake_episodes) == 1:
-            insights.append(f"You have a wake episode at {wake_episodes[0]}")
-        else:
-            insights.append(f"You have wake episodes at: {', '.join(wake_episodes)}")
+    # Sleep duration analysis
+    if sleep_data['total_sleep_time'] < 7:
+        insights.append("You're getting less than the recommended 7-9 hours of sleep")
+    elif sleep_data['total_sleep_time'] > 9:
+        insights.append("You're sleeping longer than the recommended 7-9 hours")
     else:
-        insights.append("No significant wake episodes recorded")
+        insights.append(f"Your sleep duration ({sleep_data['total_sleep_time']} hours) is within the recommended 7-9 hours range")
     
+    # Age-specific insights
+    age = user_metrics['age']
+    if age > 65:
+        if sleep_data['total_sleep_time'] < 7:
+            insights.append("For your age group (65+), 7-8 hours of sleep is recommended")
+        else:
+            insights.append("Your sleep duration is appropriate for your age group (65+)")
+    elif age < 18:
+        if sleep_data['total_sleep_time'] < 8:
+            insights.append("For your age group, 8-10 hours of sleep is recommended")
+        else:
+            insights.append("Your sleep duration is appropriate for your age group (under 18)")
+    
+    # Sleep quality insights
+    if sleep_data['deep_sleep_percentage'] < 15:
+        insights.append("Your deep sleep percentage is below optimal (15-25%)")
+    else:
+        insights.append(f"Your deep sleep percentage ({sleep_data['deep_sleep_percentage']}%) is within the optimal range of 15-25%")
+    
+    if sleep_data['rem_percentage'] < 20:
+        insights.append("Your REM sleep percentage is below optimal (20-25%)")
+    else:
+        insights.append(f"Your REM sleep percentage ({sleep_data['rem_percentage']}%) is within the optimal range of 20-25%")
+    
+    if sleep_data['sleep_efficiency'] < 85:
+        insights.append("Your sleep efficiency is below optimal (>85%)")
+    else:
+        insights.append(f"Your sleep efficiency ({sleep_data['sleep_efficiency']}%) is good (optimal is >85%)")
+    
+    # Wake episodes analysis
+    if sleep_data['wake_episodes']:
+        insights.append(f"You had wake episodes at: {', '.join(sleep_data['wake_episodes'])}")
+    else:
+        insights.append("You had no recorded wake episodes during your sleep")
+    
+    print("Debug - Generated insights:", insights)
     return insights
 
 def process_data(state: State) -> State:
    """First agent: Process and analyze sleep data"""
-   state['insights'] = analyze_sleep_data(state['user_data'])
+   print("Debug - Starting process_data")
+   print("Debug - User Data:", state['user_data'])
+   print("Debug - User Metrics:", state['user_metrics'])
+   insights = analyze_sleep_data(state['user_data'], state['user_metrics'])
+   print("Debug - Insights after analysis:", insights)
+   state['insights'] = insights
+   print("Debug - State insights after assignment:", state['insights'])
    return state
 
 def retrieve_knowledge(state: State) -> State:
    """Second agent: Get relevant sleep science knowledge"""
+   print("Debug - Starting retrieve_knowledge")
+   print("Debug - State insights in retrieve:", state['insights'])
 #    sleep_data = convert_sleep_data_to_prompt('documents/sleep_data_minutes.csv')
    sleep_data = "\n".join(state['insights'])
    system_message = SystemMessage(content="You are a sleep expert. Using the sleep science knowledge base, provide evidence-based insights.")
@@ -89,14 +118,18 @@ def retrieve_knowledge(state: State) -> State:
    query = f"{system_message.content}\n\n{sleep_data}\n\n{state['query']}"
    knowledge = rag_chain.invoke(query)
    state['knowledge'] = knowledge
+   print("Debug - State insights after retrieve:", state['insights'])
    return state
 
 def generate_response(state: State) -> State:
    """Third agent: Generate personalized response"""
+   print("Debug - Starting generate_response")
+   print("Debug - State insights in generate:", state['insights'])
    stage = state['conversation_state']['stage']
    
    if stage == "initial":
        # Initial analysis response
+       print("Debug - Insights in generate_response:", state['insights'])
        response = "Based on your sleep data:\n\n"
        for insight in state['insights']:
            response += f"• {insight}\n"
@@ -174,8 +207,15 @@ def run_demo():
    initial_state = State(
        user_data={
            'deep_sleep_percentage': 15.0,
+           'rem_percentage': 20.0,
            'sleep_efficiency': 85.0,
-           'wake_episodes': ["2:00 AM"]
+           'wake_episodes': ["2:00 AM"],
+           'total_sleep_time': 7.0
+       },
+       user_metrics={
+           'age': 30,
+           'weight': 70,
+           'height': 170
        },
        query="How can I improve my sleep quality?",
        response="",
