@@ -151,6 +151,30 @@ def standardize_time_format(time_input: str, llm: ChatOpenAI) -> str:
     response = llm.invoke(prompt).content.strip()
     return response
 
+def categorize_user_intent(user_input: str, llm: ChatOpenAI) -> str:
+    """
+    Categorize user's input into one of three intents:
+    - 'schedule': wants a personalized schedule
+    - 'analysis': wants scientific analysis
+    - 'other': wants to discuss something else
+    """
+    prompt = f"""Categorize this user input into one of these three categories: 'schedule', 'analysis', or 'other'.
+    
+    Examples:
+    "Can you create a sleep schedule for me?" -> schedule
+    "I'd like a personalized sleep plan" -> schedule
+    "What does the science say about my sleep?" -> analysis
+    "Show me the evidence-based analysis" -> analysis
+    "Let's talk about something else" -> other
+    "How's the weather today?" -> other
+    
+    User input: "{user_input}"
+    Answer with only one word: 'schedule', 'analysis', or 'other'. If the user's input only has one or two words, try to
+    find the closest match."""
+    
+    response = llm.invoke(prompt).content.strip().lower()
+    return response
+
 def generate_response(state: State) -> State:
    """Third agent: Generate personalized response"""
    print(">>> Debug - Starting generate_response")
@@ -158,30 +182,32 @@ def generate_response(state: State) -> State:
    stage = state['conversation_state']['stage']
 
    if stage == "initial":
-       is_affirmative = is_affirmative_response(state['query'], llm)
-       if is_affirmative == False:
-        #    print(">>> Inside False condition")
-           print(">>> 2 Debug - state['knowledge'] in generate_response:", state['knowledge'])
-           state['response'] = state['knowledge']
-           state['conversation_state']['stage'] = "general_analysis"
-           return state
-       # Initial analysis response
-       response = "Based on your sleep data:\n\n"
-       for insight in state['insights']:
-           response += f"• {insight}\n"
-       response += "\nWould you like me to create a personalized sleep schedule?"
-       state['conversation_state']['stage'] = "awaiting_schedule_confirmation"
-       
-   elif stage == "awaiting_schedule_confirmation":
-       print(">>> debug - state = awaiting_schedule_confirmation")
-       is_affirmative = is_affirmative_response(state['query'], llm)
-       if is_affirmative:
-           response = "Great! To create your personalized schedule, I need to know:\nWhat's your preferred bedtime?"
+       intent = categorize_user_intent(state['query'], llm)
+       print(f">>>> 101 query is {state['query']}, intent is {intent}")
+       if intent == "schedule":
+           response = "Great! Let me create a personalized sleep schedule for you."
+        #    print(f">>>> 102 query is {state['query']}, intent is {intent}")
+        #    state['conversation_state']['stage'] = "awaiting_schedule_confirmation"
+           response = "Great! Let me create a personalized sleep schedule for you.\nTo create the personalized schedule, I need to know:\nWhat's your preferred bedtime?"
            state['conversation_state']['stage'] = "collecting_bedtime"
-       else:
-           state['response'] = state['knowledge']
+       elif intent == "analysis":
+           response = state['knowledge']
            state['conversation_state']['stage'] = "general_analysis"
-           return state
+        #    return state
+       else:
+           response = "Alright, let's talk about something else."
+           state['conversation_state']['stage'] = "general_analysis"
+        #    return state
+   elif stage == "awaiting_schedule_confirmation":
+    #    print(">>> debug - state = awaiting_schedule_confirmation")
+    #    is_affirmative = is_affirmative_response(state['query'], llm)
+    #    if is_affirmative:
+        response = "Great! To create your personalized schedule, I need to know:\nWhat's your preferred bedtime?"
+        state['conversation_state']['stage'] = "collecting_bedtime"
+    #    else:
+    #        state['response'] = "Sure, let's talk about something else."
+    #        state['conversation_state']['stage'] = "general_analysis"
+    #        return state
 
    elif stage == "collecting_bedtime":
        print(">>> debug - state = collecting_bedtime")

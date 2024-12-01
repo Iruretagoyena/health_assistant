@@ -320,13 +320,16 @@ with gr.Blocks() as demo:
         global rag_state
         rag_state = None
         
+        # Store raw metrics
         user_metrics = {
             'age': age,
             'weight': weight,
-            'height': height
+            'height': height,
+            'bmi': round(weight / ((height/100) ** 2), 1)  # Calculate BMI
         }
         state.user_metrics = user_metrics
         
+        # Store raw sleep data
         data = {
             'deep_sleep_percentage': deep_sleep_pct,
             'rem_percentage': rem_pct,
@@ -336,24 +339,84 @@ with gr.Blocks() as demo:
         }
         state.sleep_data = data
         
-        state.insights = []
+        # Analyze sleep data against standard ranges
+        insights = []
+        
+        # Sleep duration analysis (7-9 hours recommended for adults)
+        if total_sleep_hrs < 7:
+            insights.append("You're getting less than the recommended 7-9 hours of sleep")
+        elif total_sleep_hrs > 9:
+            insights.append("You're getting more than the recommended 7-9 hours of sleep")
+        else:
+            insights.append("Your sleep duration is within the recommended 7-9 hours range")
+        
+        # Deep sleep analysis (15-25% is optimal)
+        if deep_sleep_pct < 15:
+            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is below the optimal range of 15-25%")
+        elif deep_sleep_pct > 25:
+            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is above the optimal range of 15-25%")
+        else:
+            insights.append(f"Your deep sleep percentage ({deep_sleep_pct}%) is within the optimal range of 15-25%")
+        
+        # REM sleep analysis (20-25% is optimal)
+        if rem_pct < 20:
+            insights.append(f"Your REM sleep percentage ({rem_pct}%) is below the optimal range of 20-25%")
+        elif rem_pct > 25:
+            insights.append(f"Your REM sleep percentage ({rem_pct}%) is above the optimal range of 20-25%")
+        else:
+            insights.append(f"Your REM sleep percentage ({rem_pct}%) is within the optimal range of 20-25%")
+        
+        # Sleep efficiency analysis (>85% is considered good)
+        if efficiency_pct < 85:
+            insights.append(f"Your sleep efficiency ({efficiency_pct}%) is below optimal (>85%)")
+        else:
+            insights.append(f"Your sleep efficiency ({efficiency_pct}%) is good (optimal is >85%)")
+        
+        # Wake episodes analysis
+        if wake_times_list:
+            insights.append(f"You had {len(wake_times_list)} wake episodes during your sleep at: {', '.join(wake_times_list)}")
+        else:
+            insights.append("You had no recorded wake episodes during your sleep")
+        
+        # BMI analysis
+        bmi = user_metrics['bmi']
+        if bmi < 18.5:
+            insights.append(f"Your BMI ({bmi}) indicates you are underweight")
+        elif 18.5 <= bmi < 25:
+            insights.append(f"Your BMI ({bmi}) is within the healthy range")
+        elif 25 <= bmi < 30:
+            insights.append(f"Your BMI ({bmi}) indicates you are overweight")
+        else:
+            insights.append(f"Your BMI ({bmi}) indicates obesity")
+
+        state.insights = insights
+        
+        # Create initial message with integrated analysis
         initial_message = (
-            f"I received your information:\n"
-            f"- Age: {user_metrics['age']} years\n"
-            f"- Weight: {user_metrics['weight']} kg\n"
-            f"- Height: {user_metrics['height']} cm\n\n"
-            f"Your sleep data:\n"
-            f"- Deep Sleep: {data['deep_sleep_percentage']}%\n"
-            f"- REM Sleep: {data['rem_percentage']}%\n"
-            f"- Sleep Efficiency: {data['sleep_efficiency']}%\n"
-            f"- Total Sleep Time: {data['total_sleep_time']} hours\n"
-            f"- Wake Episodes: {', '.join(data['wake_episodes']) if data['wake_episodes'] else 'None'}\n\n"
-            "Do you want me to analyze your sleep data and create a personalized sleep schedule?"
+            f"Sleep analysis summary:\n\n"
+            f"Personal profile:\n"
+            f"- Age: {user_metrics['age']} years, height: {user_metrics['height']} cm, weight: {user_metrics['weight']} kg\n"
+            f"- BMI: {user_metrics['bmi']} ({next(insight for insight in insights if 'BMI' in insight).split('BMI')[1].strip()})\n\n"
+            
+            f"Sleep duration:\n"
+            f"- {data['total_sleep_time']} hours - {next(insight for insight in insights if 'recommended 7-9 hours' in insight)}\n\n"
+            
+            f"Sleep quality breakdown:\n"
+            f"- Deep sleep: {data['deep_sleep_percentage']}% - {next(insight for insight in insights if 'deep sleep percentage' in insight).split('Your deep sleep percentage')[1].split('is')[1].strip()}\n"
+            f"- REM sleep: {data['rem_percentage']}% - {next(insight for insight in insights if 'REM sleep percentage' in insight).split('Your REM sleep percentage')[1].split('is')[1].strip()}\n"
+            f"- Sleep efficiency: {data['sleep_efficiency']}% - {next(insight for insight in insights if 'sleep efficiency' in insight).split('Your sleep efficiency')[1].split('is')[1].strip()}\n"
+            f"- Wake episodes: {next(insight for insight in insights if 'wake episodes' in insight).split('You had')[1].strip()}\n\n"
+            
+            # f"More detailed analysis:\n"
+            # f"{rag_state['knowledge']}\n\n"
+
+            "Would you like me to provide more science and evidence-based analysis, or create a personalized sleep schedule?"
         )
+        
         return (
-            gr.update(visible=False),  # Hide sleep_input_container
-            gr.update(visible=True),   # Show chat_container
-            [[None, initial_message]]  # Initial chatbot message
+            gr.update(visible=False),
+            gr.update(visible=True),
+            [[None, initial_message]]
         )
     
     # Event handlers
