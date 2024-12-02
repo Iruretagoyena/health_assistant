@@ -295,6 +295,19 @@ def add_custom_css():
             margin: 0 auto !important;
             display: block !important;
         }
+
+        /* Center the loading message */
+        .loading-message {
+            text-align: center !important;
+            width: 100% !important;
+        }
+
+        .loading-message h2 {
+            font-size: 24px !important;
+            margin: 20px 0 !important;
+            text-align: center !important;
+            display: block !important;
+        }
         </style>
     """)
 
@@ -543,7 +556,7 @@ with gr.Blocks() as demo:
         with gr.Column(elem_classes="loading-text-container"):
             gr.Markdown(
                 """
-                <div style='text-align: center; font-size: 24px; margin: 20px 0;'>
+                <div class="loading-message">
                     <h2>Connecting with Apple Health and loading the data...</h2>
                 </div>
                 """
