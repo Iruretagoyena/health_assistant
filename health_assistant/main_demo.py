@@ -263,7 +263,33 @@ def generate_schedule(preferences: dict, insights: List[str]) -> str:
    - Wake time: {preferences.get('wake_time')}
    - Exercise: {preferences.get('exercise_time')}
    
-   Create a personalized sleep schedule with scientific reasoning.
+   Develop a comprehensive 24-hour daily schedule tailored to optimize health, productivity, and sleep quality, while addressing the following considerations:
+
+   Morning Routine (7:00 AM - 12:00 PM):
+
+   Recommend specific activities within 30-60 minutes of waking to reinforce circadian alignment, such as direct sunlight exposure and hydration.
+   Include a suggested timing for breakfast and its composition to support energy and alertness.
+   Highlight focus or work periods and the timing for a mid-morning break.
+   Midday Activities (12:00 PM - 5:00 PM):
+
+   Specify an ideal lunch time, focusing on a balanced meal to maintain energy levels.
+   Include recommendations for short physical activity or stretching breaks during work hours.
+   Suggest timing for a power nap, if applicable, to enhance productivity and avoid disrupting nighttime sleep.
+   Afternoon Protocol (5:00 PM - 8:00 PM):
+
+   Provide guidance on the ideal exercise time (e.g., 5 PM), ensuring it doesn’t interfere with the wind-down period before bedtime.
+   Recommend timing and type of dinner, keeping it light and completed at least three hours before bedtime.
+   Evening Routine (8:00 PM - 11:30 PM):
+
+   Suggest strategies for managing light exposure, such as reducing blue light and using warmer lighting.
+   Include relaxation practices like mindfulness, journaling, or light reading to prepare for sleep.
+   Recommend a device curfew to prevent late-night stimulation.
+   Nighttime Habits (11:30 PM - 7:00 AM):
+
+   Detail a consistent pre-sleep routine to support the transition to sleep.
+   Address wake episodes at 02:30 and 04:15 with suggestions for minimizing disruptions, such as temperature regulation or white noise.
+   Provide tips for improving deep and REM sleep percentages based on sleep science principles.
+   Ensure the schedule is evidence-based, practical, and aligned with the user’s current habits and preferences. Include explanations for why each recommendation is beneficial, to promote adherence and understanding of the underlying principles.
    """
    
    response = rag_chain.invoke(f"{system_message.content}\n\n{query}")
